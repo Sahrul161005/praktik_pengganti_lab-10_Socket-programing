@@ -1,4 +1,4 @@
-# echoclient.py
+# NewClient.py
 
 import socket
 import threading

@@ -3,21 +3,18 @@
 import socket
 import threading
 
-HOST = "192.168.1.18"  #alamat ip untuk server
+HOST = "0.0.0.0"  # Alamat IP untuk server
 PORT = 65432  # Port yang digunakan untuk berkomunikasi dengan server
 
 clients = []  # Daftar untuk menyimpan klien yang terhubung
 
-#pembuatan broadcast
-def broadcast(message, sender_conn):
+def broadcast(message, sender_username):
     """Kirim pesan ke semua klien kecuali pengirim"""
     for client in clients:
-        if client != sender_conn:
-            try:
-                client.sendall(message.encode("utf-8"))
-            except:
-                clients.remove(client)
-
+        try:
+            client.sendall(message.encode("utf-8"))
+        except:
+            clients.remove(client)
 
 def handle_client(conn, addr):
     print(f"Connected by {addr}")
@@ -34,16 +31,15 @@ def handle_client(conn, addr):
             message = conn.recv(1024).decode("utf-8").strip()
             if not message:
                 break
-            response = f"{username}: {message}"
+            response = f"{message}"
             print(response)  # Cetak pesan di server
-            broadcast(response, conn)  # Broadcast pesan ke semua klien
+            broadcast(response, username)  # Broadcast pesan ke semua klien
     except ConnectionResetError:
         print(f"Connection with {addr} closed forcibly")
     finally:
         print(f"Disconnected from {addr}")
         clients.remove(conn)  # Hapus koneksi dari daftar klien
         conn.close()
-
 
 # Main program
 if __name__ == "__main__":
